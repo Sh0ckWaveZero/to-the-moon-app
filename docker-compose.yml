@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  app:
+    stdin_open: true
+    container_name: to-the-moon
+    image: to-the-moon
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - /app/node_modules
+      - .:/app
+    ports:
+      - 5173:5173
+networks:
+  default:
+      name: yadom
+volumes:
+  dependencies:
+    driver: local
