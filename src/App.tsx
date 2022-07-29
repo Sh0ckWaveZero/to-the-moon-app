@@ -2,6 +2,7 @@ import { useState } from "react";
 import liff from "@line/liff";
 import "./App.css";
 import useEffectOnce from "./utils/useEffectOnce";
+import toast, { Toaster } from "react-hot-toast";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -9,7 +10,6 @@ function App() {
   const [displayName, setDisplayName] = useState("");
   const [pictureUrl, setPictureUrl] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
-  const [userId, setUserId] = useState("");
 
   useEffectOnce(() => {
     liff
@@ -23,15 +23,11 @@ function App() {
         } else {
           // TO DO: connect to server and get user info
           const profile = await liff.getProfile();
-          console.log(
-            "🚀 ~ file: App.tsx ~ line 22 ~ .then ~ profile",
-            profile
-          );
-          setMessage("Login Success.\nWelcome back! 🎉");
+          setMessage(`Login Success.\n Welcome back!`);
           setDisplayName(profile.displayName);
           setPictureUrl(profile.pictureUrl || "");
           setStatusMessage(profile.statusMessage || "");
-          setUserId(profile.userId);
+          await callback(profile);
         }
       })
       .catch((e: Error) => {
@@ -39,8 +35,39 @@ function App() {
       });
   });
 
+  const callback = async (profile: any) => {
+    // POST request using fetch with async/await
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_JWT}`,
+      },
+      body: JSON.stringify(profile),
+    };
+    return await fetch(
+      `${import.meta.env.VITE_API_URL}/line/liff/callback`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then(async (data) => {
+        if (data.statusText) {
+          toast.success(await data.statusText);
+        } else {
+          toast.error(data.message);
+        }
+        liff.closeWindow();
+      });
+  };
+
+  const onClose = () => {
+    liff.closeWindow();
+  };
+
   return (
     <div className="App">
+      <Toaster position="top-center" reverseOrder={false} />
       <h1>To The Moon App</h1>
       {message && (
         <div>
@@ -58,6 +85,9 @@ function App() {
           <p>{displayName}</p>
           <p>{statusMessage}</p>
           <p>{message}</p>
+          <button onClick={() => onClose()}>
+            ปิดหน้าต่างนี้เพื่อดำเนินการต่อ
+          </button>
         </div>
       )}
       {error && (
