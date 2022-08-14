@@ -11,13 +11,13 @@ services:
       # for deployment on local, use the following:
       # dockerfile: dockerfile.dev
     volumes:
-      - /app/node_modules
+      # - /app/node_modules
       - .:/app
     ports:
       - 5173:5173
 networks:
-  default:
-    name: yadom
+  yadom:
+    driver: bridge
 volumes:
   dependencies:
     driver: local
