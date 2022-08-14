@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   app:
     stdin_open: true
@@ -7,7 +6,10 @@ services:
     image: to-the-moon
     build:
       context: .
-      dockerfile: dockerfile
+      # for deployment on production, use the following:
+      dockerfile: dockerfile.prod
+      # for deployment on local, use the following:
+      # dockerfile: dockerfile.dev
     volumes:
       - /app/node_modules
       - .:/app
@@ -15,7 +17,7 @@ services:
       - 5173:5173
 networks:
   default:
-      name: yadom
+    name: yadom
 volumes:
   dependencies:
     driver: local
