@@ -41,7 +41,6 @@ function App() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_JWT}`,
       },
       body: JSON.stringify(profile),
