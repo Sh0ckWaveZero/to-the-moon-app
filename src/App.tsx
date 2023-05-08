@@ -62,6 +62,7 @@ function App() {
 
   const onClose = () => {
     liff.closeWindow();
+    window.close();
   };
 
   return (
